@@ -23,9 +23,23 @@ const vec2 = (x, y)=>{
 
 const render = ()=>{
 	board.clear()
+	//rectangle
 	board.beginFill(0xeeeeee)
-	board.lineStyle(5, 0x000000)
+	board.lineStyle(2, 0x000000)
 	board.drawRect(0, 0, width, height)
+
+	//grid
+	board.lineStyle(1, 0xaaaaaa)
+	for(let i=1; i<cols; i++){
+		board.moveTo(i*cellSize, 0)
+		board.lineTo(i*cellSize, height)
+	}
+	for(let i=1; i<rows; i++){
+		board.moveTo(0, i*cellSize)
+		board.lineTo(width, i*cellSize)
+	}
+
+	//position
 	const offsetX = (_W-width)/2
 	const offsetY = (_H-height)/2
 	board.x = offsetX
