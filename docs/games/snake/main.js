@@ -16,6 +16,8 @@ let width = cellSize*cols
 let height = cellSize*rows
 const speed = 3
 
+let playing = true
+
 
 const S = [[1, 0], [0, 0]]
 let direction = 1 
@@ -72,7 +74,11 @@ const step = ()=>{
 	}
 
 	S[0] = [head[0]+step[0], head[1]+step[1]]
-	updateSnake()
+	if(S[0][0]<0 || S[0][0]>=cols || S[0][1]<0 || S[0][1]>=rows){
+		playing = false
+	}else{
+		updateSnake()
+	}
 }
 
 const updateSnake = ()=>{
@@ -126,9 +132,11 @@ const events = {
 let timeStamp = Date.now()
 const loop = ()=>{
 	requestAnimationFrame(loop)
-	if(Date.now()-timeStamp>=1000/speed){
-		timeStamp = Date.now()
-		step()
+	if(playing){
+		if(Date.now()-timeStamp>=1000/speed){
+			timeStamp = Date.now()
+			step()
+		}
 	}
 
 	for(const i in events){
