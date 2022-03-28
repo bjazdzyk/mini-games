@@ -7,6 +7,7 @@ document.body.appendChild(app.view);
 
 app.renderer.backgroundColor = 0x0faaf0
 
+const border_thickness = 5
 const rows = 10
 const cols = 15
 const margin = 1
@@ -43,8 +44,8 @@ const updateBoard = ()=>{
 	}
 	//outlines
 	board.endFill()
-	board.lineStyle(3, 0x000000)
-	board.drawRect(0, 0, width, height)
+	board.lineStyle(border_thickness, 0x000000)
+	board.drawRect(-border_thickness/2, -border_thickness/2, width+border_thickness/2, height+border_thickness/2)
 
 	//position
 	const offsetX = (_W-width)/2
