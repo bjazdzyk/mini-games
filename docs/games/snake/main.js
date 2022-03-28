@@ -45,7 +45,7 @@ const updateBoard = ()=>{
 	//outlines
 	board.endFill()
 	board.lineStyle(border_thickness, 0x000000)
-	board.drawRect(-border_thickness/2, -border_thickness/2, width+border_thickness/2, height+border_thickness/2)
+	board.drawRect(-border_thickness/2, -border_thickness/2, width+border_thickness, height+border_thickness)
 
 	//position
 	const offsetX = (_W-width)/2
@@ -101,8 +101,29 @@ app.stage.addChild(snake)
 updateSnake()
 
 
-let timeStamp = Date.now()
+const keys = {}
+window.addEventListener('keydown', (e)=>{
+	keys[e.code] = true
+})
+window.addEventListener('keyup', (e)=>{
+	keys[e.code] = null
+})
+const events = {
+	ArrowRight(){
+		direction = 1
+	},
+	ArrowDown(){
+		direction = 2
+	},
+	ArrowLeft(){
+		direction = 3
+	},
+	ArrowUp(){
+		direction = 4
+	}
+}
 
+let timeStamp = Date.now()
 const loop = ()=>{
 	requestAnimationFrame(loop)
 	if(Date.now()-timeStamp>=1000/speed){
@@ -110,8 +131,15 @@ const loop = ()=>{
 		step()
 	}
 
+	for(const i in events){
+		if(keys[i]){
+			events[i]()
+		}
+	}
+
 }
 loop()
+
 
 //window resize
 window.addEventListener('resize', ()=>{
