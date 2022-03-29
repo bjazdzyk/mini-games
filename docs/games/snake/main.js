@@ -14,23 +14,47 @@ const margin = 1
 let cellSize = Math.min(_W/(cols+margin*2), _H/(rows+margin*2))
 let width = cellSize*cols
 let height = cellSize*rows
-const speed = 8
+const speed = 10
+
+let applePos = {}
 
 let playing = true
+let bigger = false
 
 
-const S = [[1, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
+const T = {}
+const S = [[1, 0], [0, 0]]
+
 let direction = 1 
 let unavaiableDir = 3
 
+const board = new PIXI.Graphics()
+app.stage.addChild(board)
+const snake = new PIXI.Graphics()
+app.stage.addChild(snake)
+const apples = new PIXI.Graphics()
+app.stage.addChild(apples)
+
+
+const newApple = ()=>{
+	let x = Math.floor(Math.random()*cols)
+	let y = Math.floor(Math.random()*rows)
+	while(T[vec2(x, y)]){
+		x = Math.floor(Math.random()*cols)
+		y = Math.floor(Math.random()*rows)
+	}
+	T[vec2(x, y)] = 2
+	applePos.x = x
+	applePos.y = y
+}
 
 const vec2 = (x, y)=>{
 	return `${x}:${y}`
-	//
 }
 
 const updateBoard = ()=>{
 	board.clear()
+	apples.clear()
 	//white rectangle
 	board.beginFill(0xeeeeee)
 	board.drawRect(0, 0, width, height)
@@ -50,17 +74,32 @@ const updateBoard = ()=>{
 	board.lineStyle(border_thickness, 0x000000)
 	board.drawRect(-border_thickness/2, -border_thickness/2, width+border_thickness, height+border_thickness)
 
+	//apple
+	apples.beginFill(0xff0000)
+	apples.drawRect(applePos.x*cellSize, applePos.y*cellSize, cellSize, cellSize)
+
 	//position
 	const offsetX = (_W-width)/2
 	const offsetY = (_H-height)/2
 	board.x = offsetX
 	board.y = offsetY
+	apples.x = offsetX
+	apples.y = offsetY
 }
 
 const step = ()=>{
+	const tail = S[S.length-1]
 	for(let i=S.length-1; i>0; i--){
 		S[i] = S[i-1]
 	}
+
+	if(bigger){
+		bigger = false
+		S.push(tail)
+	}else{
+		T[vec2(S[S.length-1][0], S[S.length-1][1])] = null
+	}
+
 	let head = S[0]
 	let step = [0, 0]
 
@@ -75,17 +114,17 @@ const step = ()=>{
 	}
 
 	head = [head[0]+step[0], head[1]+step[1]]
-	for(let i of S){
-		if(JSON.stringify(i)==JSON.stringify(head)){
-			playing = false
-			return
-		}
-	}
-	if(head[0]<0 || head[0]>=cols || head[1]<0 || head[1]>=rows || S.includes(head)){
+
+	if(head[0]<0 || head[0]>=cols || head[1]<0 || head[1]>=rows || T[vec2(head[0], head[1])] == 1){
 		playing = false
 		return
+	}else if(T[vec2(head[0], head[1])] == 2){
+		bigger = true
+		newApple()
+		updateBoard()
 	}
 	S[0] = head
+	T[vec2(S[0][0], S[0][1])] = 1
 	unavaiableDir = (direction+1)%4+1
 	updateSnake()
 }
@@ -107,13 +146,13 @@ const updateSnake = ()=>{
 	snake.y = offsetY
 }
 
-const board = new PIXI.Graphics()
-app.stage.addChild(board)
+newApple()
 updateBoard()
-
-const snake = new PIXI.Graphics()
-app.stage.addChild(snake)
 updateSnake()
+
+for(let i=0; i<S.length-1; i++){
+	T[vec2(S[i][0], S[i][1])] = 1
+}
 
 
 const keys = {}
@@ -150,6 +189,7 @@ const events = {
 
 let timeStamp = Date.now()
 const loop = ()=>{
+
 	requestAnimationFrame(loop)
 	if(playing){
 		if(Date.now()-timeStamp>=1000/speed){
