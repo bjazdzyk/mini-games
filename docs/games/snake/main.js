@@ -8,19 +8,20 @@ document.body.appendChild(app.view);
 app.renderer.backgroundColor = 0x0faaf0
 
 const border_thickness = 5
-const rows = 10
-const cols = 15
+const rows = 15
+const cols = 20
 const margin = 1
 let cellSize = Math.min(_W/(cols+margin*2), _H/(rows+margin*2))
 let width = cellSize*cols
 let height = cellSize*rows
-const speed = 3
+const speed = 8
 
 let playing = true
 
 
-const S = [[1, 0], [0, 0]]
+const S = [[1, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0], [0, 0]]
 let direction = 1 
+let unavaiableDir = 3
 
 
 const vec2 = (x, y)=>{
@@ -60,7 +61,7 @@ const step = ()=>{
 	for(let i=S.length-1; i>0; i--){
 		S[i] = S[i-1]
 	}
-	const head = S[0]
+	let head = S[0]
 	let step = [0, 0]
 
 	if(direction == 1){
@@ -73,12 +74,20 @@ const step = ()=>{
 		step = [0, -1]
 	}
 
-	S[0] = [head[0]+step[0], head[1]+step[1]]
-	if(S[0][0]<0 || S[0][0]>=cols || S[0][1]<0 || S[0][1]>=rows){
-		playing = false
-	}else{
-		updateSnake()
+	head = [head[0]+step[0], head[1]+step[1]]
+	for(let i of S){
+		if(JSON.stringify(i)==JSON.stringify(head)){
+			playing = false
+			return
+		}
 	}
+	if(head[0]<0 || head[0]>=cols || head[1]<0 || head[1]>=rows || S.includes(head)){
+		playing = false
+		return
+	}
+	S[0] = head
+	unavaiableDir = (direction+1)%4+1
+	updateSnake()
 }
 
 const updateSnake = ()=>{
@@ -116,16 +125,26 @@ window.addEventListener('keyup', (e)=>{
 })
 const events = {
 	ArrowRight(){
-		direction = 1
+		if(unavaiableDir != 1){
+			direction = 1
+
+		}
 	},
 	ArrowDown(){
-		direction = 2
+		if(unavaiableDir != 2){
+			direction = 2
+
+		}
 	},
 	ArrowLeft(){
-		direction = 3
+		if(unavaiableDir != 3){
+			direction = 3
+		}
 	},
 	ArrowUp(){
-		direction = 4
+		if(unavaiableDir != 4){
+			direction = 4
+		}
 	}
 }
 
