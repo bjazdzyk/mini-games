@@ -14,7 +14,7 @@ const margin = 1
 let cellSize = Math.min(_W/(cols+margin*2), _H/(rows+margin*2))
 let width = cellSize*cols
 let height = cellSize*rows
-const speed = 10
+const speed = 6
 
 let applePos = {}
 
