@@ -16,6 +16,8 @@ let width = cellSize*cols
 let height = cellSize*rows
 const speed = 6
 
+let points = 0
+
 let applePos = {}
 
 let playing = true
@@ -119,6 +121,9 @@ const step = ()=>{
 		playing = false
 		return
 	}else if(T[vec2(head[0], head[1])] == 2){
+		points ++
+		document.getElementById("score").innerHTML = points
+		console.log(points)
 		bigger = true
 		newApple()
 		updateBoard()
