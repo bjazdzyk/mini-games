@@ -13,18 +13,31 @@ body{
 
 .scoreContainer{
 	position: fixed;
-	font-size: 30px;
 	margin: 10px;
+	color: darkblue;
+}
+.text{
+	font-size: 30px;
+}
+.bestScoreContainer{
+	position: fixed;
+	margin: 10px;
+	top: 50px;
+	color: darkblue;
 }
 
 	</style>
 </head>
 <body>
-<div class="scoreContainer">
 
+<div class="scoreContainer">
 <di class="text">Points: </di>
 <di class="text" id="score">0</di>
+</div>
 
+<div class="bestScoreContainer">
+<di class="text">Best Score: </di>
+<di class="text" id="bestScore">0</di>
 </div>
 
 <script src="../../js/pixi.js"></script>

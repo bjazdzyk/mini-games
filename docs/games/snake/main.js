@@ -17,6 +17,12 @@ let height = cellSize*rows
 const speed = 6
 
 let points = 0
+let bestScore = JSON.parse(window.localStorage.getItem("Snake-bestScore"))
+if(!bestScore){
+	bestScore = 0
+}
+document.getElementById("bestScore").innerHTML = bestScore
+
 
 let applePos = {}
 
@@ -123,7 +129,12 @@ const step = ()=>{
 	}else if(T[vec2(head[0], head[1])] == 2){
 		points ++
 		document.getElementById("score").innerHTML = points
-		console.log(points)
+		if(points>bestScore){
+			bestScore = points
+			document.getElementById("bestScore").innerHTML = bestScore
+			window.localStorage.setItem("Snake-bestScore", bestScore)
+		}
+
 		bigger = true
 		newApple()
 		updateBoard()
